@@ -19,4 +19,4 @@ padding=50
 new_video_height=$((input_video_height + padding))
 
 # Use ffmpeg to add white padding to the video and then overlay the text
-ffmpeg -i $input_video -filter_complex "[0:v]pad=iw:$new_video_height:y=$padding:color=white[padded];[padded]drawtext=text=$text:fontcolor=black:fontsize=30:x=10:y=10[out]" -map "[out]" $output_video
+ffmpeg -i $input_video -filter_complex "[0:v]pad=iw:$new_video_height:y=$padding:color=white[padded];[padded]drawtext=text=$text:fontcolor=black:fontsize=32:x=(w-tw)/2:y=10[out]" -map "[out]" $output_video
