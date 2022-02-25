@@ -2,25 +2,33 @@
 # Usage: ipv6_run.sh <interface> <program> <arguments>
 
 interface=$1
-# Generate a random string
+# Generate a random string for interface name
 macvlan_interface=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
 
 echo "Creating macvlan interface $macvlan_interface" > /dev/stderr
 sudo ip link add $macvlan_interface link $interface type macvlan mode bridge
 
+# Generate a random string for the network namespace
 netns_name=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
 echo "Creating network namespace $netns_name" > /dev/stderr
+# Create the network namespace
 sudo ip netns add $netns_name
+# Move the created macvlan interface into the network namespace
 sudo ip link set $macvlan_interface netns $netns_name
 
-# Dhcp
+# Bring up loopback interface(it doesn't work without it)
 sudo ip netns exec $netns_name ip link set lo up
+
+# Bring up the macvlan interface in the network namespace
 sudo ip netns exec $netns_name ip link set $macvlan_interface up
-# Request an ipv6 address only
+
+# Request an ipv6 address from dhcp
 sudo ip netns exec $netns_name dhclient -6 -pf /tmp/dhclient.pid -lf /tmp/dhclient.leases $macvlan_interface
 
+# Wait 2 seconds for the ipv6 address to be assigned
 sleep 2
 
+# Execute the program in the network namespace
 sudo ip netns exec $netns_name bash -c "$2 $3 $4 $5 $6 $7 $8 $9"
 
 # Cleanup
