@@ -19,7 +19,9 @@ sudo ip netns exec $netns_name ip link set $macvlan_interface up
 # Request an ipv6 address only
 sudo ip netns exec $netns_name dhclient -6 -pf /tmp/dhclient.pid -lf /tmp/dhclient.leases $macvlan_interface
 
-sudo ip netns exec $netns_name $2 $3 $4 $5 $6 $7 $8 $9
+sleep 2
+
+sudo ip netns exec $netns_name bash -c "$2 $3 $4 $5 $6 $7 $8 $9"
 
 # Cleanup
 sudo ip netns exec $netns_name ip link set $macvlan_interface down
