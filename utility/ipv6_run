@@ -24,7 +24,13 @@ sudo ip netns exec $netns_name ip link set $macvlan_interface up
 
 # Request an ipv6 address from dhcp
 echo "Requesting ipv6 address from dhcp" > /dev/stderr
-sudo ip netns exec $netns_name dhclient -6 -pf /tmp/dhclient.pid -lf /tmp/dhclient.leases $macvlan_interface
+
+# If dhcpcd is not installed, use dhclient instead
+if command -v dhcpcd > /dev/null; then
+    sudo ip netns exec $netns_name dhcpcd -6 $macvlan_interface
+else
+    sudo ip netns exec $netns_name dhclient -6 -pf /tmp/dhclient.pid -lf /tmp/dhclient.leases $macvlan_interface
+fi
 echo "Got ipv6 address" > /dev/stderr
 
 # Wait for the ipv6 to work(timeout of 60 seconds)
