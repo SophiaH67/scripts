@@ -27,8 +27,17 @@ echo "Requesting ipv6 address from dhcp" > /dev/stderr
 sudo ip netns exec $netns_name dhclient -6 -pf /tmp/dhclient.pid -lf /tmp/dhclient.leases $macvlan_interface
 echo "Got ipv6 address" > /dev/stderr
 
-# Wait 2 seconds for the ipv6 address to be assigned
-sleep 2
+# Wait for the ipv6 to work(timeout of 60 seconds)
+echo "Waiting for ipv6 to work" > /dev/stderr
+timeout=60
+while [ $timeout -gt 0 ]; do
+    if sudo ip netns exec $netns_name ping -6 -c 1 -w 1 google.com > /dev/null 2>&1; then
+        echo "ipv6 is working" > /dev/stderr
+        break
+    fi
+    sleep 1
+    timeout=$((timeout-1))
+done
 
 # Execute the program in the network namespace
 echo "Starting program" > /dev/stderr
