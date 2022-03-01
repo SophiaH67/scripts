@@ -39,6 +39,11 @@ while [ $timeout -gt 0 ]; do
     timeout=$((timeout-1))
 done
 
+if [ $timeout -eq 0 ]; then
+    echo "ipv6 is not working" > /dev/stderr
+    exit 1
+fi
+
 # Execute the program in the network namespace
 echo "Starting program" > /dev/stderr
 sudo ip netns exec $netns_name bash -c "$2 $3 $4 $5 $6 $7 $8 $9"
