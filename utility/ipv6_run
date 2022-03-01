@@ -52,7 +52,9 @@ fi
 
 # Execute the program in the network namespace
 echo "Starting program" > /dev/stderr
-sudo ip netns exec $netns_name bash -c "$2 $3 $4 $5 $6 $7 $8 $9"
+# Remove the first argument(the interface name)
+shift
+sudo ip netns exec $netns_name "$@"
 echo "Program finished, cleaning up" > /dev/stderr
 
 # Cleanup
