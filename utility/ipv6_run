@@ -34,6 +34,16 @@ echo "Requesting ipv6 address from dhcp" > /dev/stderr
 # If dhcpcd is not installed, use dhclient instead
 if command -v dhcpcd > /dev/null; then
     echo "dhcpcd is installed, using it" > /dev/stderr
+    # If dhcpcd is running, stop it
+    if pidof dhcpcd > /dev/null; then
+        echo "dhcpcd is running, stopping it" > /dev/stderr
+        killall dhcpcd
+        # Wait for dhcpcd to stop
+        while pidof dhcpcd > /dev/null; do
+            sleep 1
+        done
+    fi
+    # Finally, start dhcpcd
     ip netns exec $netns_name dhcpcd -6 $macvlan_interface
 else
     echo "dhcpcd is not installed, using dhclient instead" > /dev/stderr
