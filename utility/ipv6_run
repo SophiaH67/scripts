@@ -36,8 +36,16 @@ if command -v dhcpcd > /dev/null; then
     echo "dhcpcd is installed, using it" > /dev/stderr
     # If dhcpcd is running, stop it
     if pidof dhcpcd > /dev/null; then
-        echo "dhcpcd is running, stopping it" > /dev/stderr
+        # Check if dhcpcd is in systemctl
+        if systemctl -q is-active dhcpcd; then
+            echo "dhcpcd is running via systemd, stopping it" > /dev/stderr
+            systemctl stop dhcpcd
+        else
+            echo "dhcpcd is running, stopping it" > /dev/stderr
+        fi
         killall dhcpcd
+        # Use systemd to stop dhcpcd
+        systemctl stop dhcpcd@$macvlan_interface.service
         # Wait for dhcpcd to stop
         while pidof dhcpcd > /dev/null; do
             sleep 1
