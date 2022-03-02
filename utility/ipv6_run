@@ -74,6 +74,15 @@ if [ $timeout -eq 0 ]; then
     exit 1
 fi
 
+# If dhcpcd was used, stop it
+if command -v dhcpcd > /dev/null; then
+    killall dhcpcd
+    while pidof dhcpcd > /dev/null; do
+        echo "Waiting for dhcpcd to stop" > /dev/stderr
+        sleep 1
+    done
+fi
+
 # Execute the program in the network namespace
 echo "Starting program" > /dev/stderr
 # Remove the first argument(the interface name)
