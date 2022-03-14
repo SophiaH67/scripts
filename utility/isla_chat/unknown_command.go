@@ -10,11 +10,20 @@ import (
 func main() {
 	var message string
 	var response string
-	for _, arg := range os.Args[1:] {
-		message += arg + " "
-	}
 
-	response = ask_isla(message)
+	if os.Args[1] == "say" {
+		for _, arg := range os.Args[2:] {
+			message += arg + " "
+		}
+		response = ask_isla(message)		
+	} else {
+		// This is so that the chat server can respond with queued messages.
+		response = ask_isla("_")
+		// Exit if the buffer is empty.
+		if strings.HasPrefix(response, "Command not found") {
+			os.Exit(0)
+		}
+	}
 	// Format the response so that the original message is displayed.
 	response = ">>> " + message + "\n " + strings.Join(strings.Split(response, "\n"), "\n ")
 
