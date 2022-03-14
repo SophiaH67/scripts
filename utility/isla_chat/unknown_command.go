@@ -15,7 +15,9 @@ func main() {
 		for _, arg := range os.Args[2:] {
 			message += arg + " "
 		}
-		response = ask_isla(message)		
+		response = ask_isla(message)
+		// Format the response so that the original message is displayed.
+		response = ">>> " + message + "\n " + strings.Join(strings.Split(response, "\n"), "\n ")
 	} else {
 		// This is so that the chat server can respond with queued messages.
 		response = ask_isla("_")
@@ -23,9 +25,9 @@ func main() {
 		if strings.HasPrefix(response, "Command not found") {
 			os.Exit(0)
 		}
+		// Since we aren't the ones sending the message, we don't need to display the message.
+		response = " " + strings.Join(strings.Split(response, "\n"), "\n ")
 	}
-	// Format the response so that the original message is displayed.
-	response = ">>> " + message + "\n " + strings.Join(strings.Split(response, "\n"), "\n ")
 
 	// Write the response to /tmp/isla_chat.txt.
 	file, err := os.Create("/tmp/isla_chat.txt")
