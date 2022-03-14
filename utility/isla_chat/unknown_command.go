@@ -16,7 +16,7 @@ func main() {
 
 	response = ask_isla(message)
 	// Format the response so that the original message is displayed.
-	response = "> " + message + "\n " + strings.Join(strings.Split(response, "\n"), "\n ")
+	response = ">>> " + message + "\n " + strings.Join(strings.Split(response, "\n"), "\n ")
 
 	// Write the response to /tmp/isla_chat.txt.
 	file, err := os.Create("/tmp/isla_chat.txt")
