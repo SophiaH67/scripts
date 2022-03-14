@@ -40,7 +40,7 @@ func main() {
 
 func ask_isla(message string) string {
 	// Post the message to the chat server.
-	resp, err := http.Post("http://localhost:9123/", "application/json", bytes.NewBuffer([]byte(`{"message": "`+message+`"}`)))
+	resp, err := http.Post("http://192.168.1.234:9123/", "application/json", bytes.NewBuffer([]byte(`{"message": "`+message+`"}`)))
 	if err != nil {
 		panic(err)
 	}
