@@ -16,6 +16,9 @@ func main() {
 			message += arg + " "
 		}
 		response = ask_isla(message)
+		if strings.HasPrefix(response, "Command not found") {
+			response = ""
+		}
 		// Format the response so that the original message is displayed.
 		response = ">>> " + message + "\n " + strings.Join(strings.Split(response, "\n"), "\n ")
 	} else {
