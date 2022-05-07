@@ -1,0 +1,3 @@
+#!/bin/bash
+LAST_MESSAGE_ID=$(cat /tmp/last_message_id | jq -r .id)
+curl http://192.168.1.234:9812/$LAST_MESSAGE_ID 2> /dev/null
